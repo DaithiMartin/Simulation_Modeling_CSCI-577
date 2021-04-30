@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from simulation_project.prioritized_dqn_agent import Agent
+from Graduate_Project_Agent_Based_Model.CES_PDQN_Agent import Agent
 
 
 # %%
