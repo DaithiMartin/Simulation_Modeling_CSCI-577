@@ -5,7 +5,7 @@ import numpy as np
 import random
 from collections import namedtuple, deque
 
-from simulation_project.CES_PDQN_Model import Actor
+from Graduate_Project_Agent_Based_Model.CES_PDQN_Model import Actor
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -24,7 +24,7 @@ class Agent:
     def __init__(self, state_size, action_size, seed):
 
         """
-        Initializes Agent Object
+        Initializes Agent.
         """
         self.action_size = action_size
 
@@ -101,12 +101,6 @@ class Agent:
         else:
             return np.random.randint(0, 101, 2) / 100 * max_water_land
 
-        # # Epsilon-greedy action selection
-        # if random.random() > eps:
-        #     return np.array(water_action, land_action) * max_water_land
-        # else:
-        #     return np.random.randint(0, 101, 2) / 100 * max_water_land
-
     def learn(self, experiences, gamma):
         # type: (tuple, float) -> None
         """
@@ -117,9 +111,6 @@ class Agent:
             gamma: (float) expected future reward discount factor
         """
         states, actions, rewards, next_states, dones, probabilities = experiences
-
-        # only for double DQN
-        # self.beta = min(1, self.beta + 1e-5)
 
         sampling_weight = (1/BUFFER_SIZE * 1/probabilities) ** BETA / probabilities.squeeze().max(0)[0]
 

@@ -4,17 +4,17 @@ import torch.nn.functional as F
 
 
 class Actor(nn.Module):
-    """Actor (Deterministic Policy!) Model."""
+    """Actor, Action-Value function."""
 
     def __init__(self, state_size, action_size, seed, fc_units=256):
         """
         Initialize parameters and build model.
 
         Args:
-            state_size (int): Dimension of each state
-            action_size (int): Dimension of each action
+            state_size (int): Dimension of state space
+            action_size (int): Dimension of action space
             seed (int): Random seed
-            fc_units (int): Number of nodes in first hidden layer
+            fc_units (int): Hidden layer dimension
         """
         super(Actor, self).__init__()
         self.seed = torch.manual_seed(seed) if seed is not None else None
@@ -23,10 +23,10 @@ class Actor(nn.Module):
         self.fc2 = nn.Linear(fc_units, fc_units)
 
         self.fc_water_head_1 = nn.Linear(fc_units, fc_units)
-        self.fc_water_head_2 = nn.Linear(fc_units, 101)
+        self.fc_water_head_2 = nn.Linear(fc_units, action_size)
 
         self.fc_land_head_1 = nn.Linear(fc_units, fc_units)
-        self.fc_land_head_2 = nn.Linear(fc_units, 101)
+        self.fc_land_head_2 = nn.Linear(fc_units, action_size)
 
         self.dropout_1 = nn.Dropout(p=0.25)
         self.dropout_2 = nn.Dropout(p=0.25)
@@ -36,6 +36,9 @@ class Actor(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        """
+        Initializes network weights using uniform distribution rather than Gaussian.
+        """
         self.fc1.weight.data.uniform_(-3e-3, 3e-3)
         self.fc2.weight.data.uniform_(-3e-3, 3e-3)
 
@@ -45,15 +48,14 @@ class Actor(nn.Module):
         self.fc_land_head_1.weight.data.uniform_(-3e-3, 3e-3)
         self.fc_land_head_2.weight.data.uniform_(-3e-3, 3e-3)
 
-        return None
 
     def forward(self, state):
         """
-        Policy network that maps states -> action values! not actions
+        Maps states -> action values
 
         Args:
             state vector (torch.tensor):
-            [batch, available_water, available_land, crops_encoding, cost_encoding]
+            [batch, available_water, max_water, available_land, crop_price]
         """
 
         x1 = self.dropout_1(F.relu(self.fc1(state)))

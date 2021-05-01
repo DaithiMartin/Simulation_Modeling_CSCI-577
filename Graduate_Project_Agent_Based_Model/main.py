@@ -41,7 +41,7 @@ class SimConfig:
 
         # agent parameters
         self.state_size = 4
-        self.action_size = 2 * self.num_crops
+        self.action_size = 101      # percentage of resource used, need 101 to accommodate 0-100 range
         self.memory_size = 10
 
         # land and water physical constraints
@@ -162,7 +162,7 @@ class SimulationCES:
 
         return cost
 
-    def plot_reward(self, crop):
+    def plot_reward(self):
 
         x_len = int(2e6)
         water = np.arange(x_len) + 1
